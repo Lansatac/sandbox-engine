@@ -53,6 +53,9 @@ class Camera : Component
 
 		foreach(renderer; renderers)
 		{
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LESS);
+
 			auto transform = registry.getComponent!Transform(renderer.ObjectID);
 			//// Model matrix : an identity matrix (model will be at the origin)
 			mat4 Model = mat4.identity
