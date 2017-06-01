@@ -55,11 +55,14 @@ int main()
     {
         glLoggingEnabled = false;
     }
-    if(glLoggingEnabled)
-    {
-        glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback(&loggingCallbackOpenGL, null);
-    }
+	version(Linux)
+	{
+		if(glLoggingEnabled)
+		{
+			glEnable(GL_DEBUG_OUTPUT);
+			glDebugMessageCallback(&loggingCallbackOpenGL, null);
+		}
+	}
 
     auto meshDataRepo = new AssImpMeshDataRepository();
     auto meshRepo = new OpenGLMeshRepository(meshDataRepo);
