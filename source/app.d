@@ -104,7 +104,7 @@ int main()
 		fps.addTime(deltaTime);
 		if(fps.trackedWindow() > 1f)
 		{
-			writefln("fps: %s", fps.averageRate);
+			//writefln("fps: %s", fps.averageRate);
 			fps.reset;
 		}
 

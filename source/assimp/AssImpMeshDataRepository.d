@@ -17,14 +17,13 @@ class AssImpMeshDataRepository : MeshRepository.Data
 	MeshData Load(string path)
 	{
 		import std.string;
-		import std.algorithm;
-		import std.range;
-		import std.exception;
 
 		auto scene = aiImportFile( path.toStringz, aiProcess_GenSmoothNormals | aiProcess_GenUVCoords );
 		auto id = nextID++;
 
+		//Convert to engine representation
 		scenes[id] = conv(*scene);
+
 		aiReleaseImport(scene);
 		return id;
 	}

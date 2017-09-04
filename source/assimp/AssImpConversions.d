@@ -8,15 +8,19 @@ import resources.Mesh;
 import std.algorithm;
 import std.range;
 
+const (T[]) toArray(T)(const T* ptr, ulong length) pure nothrow
+{
+	return ptr == null ? [] : ptr[0..length];
+}
 
 string conv(const aiString impString) pure nothrow
 {
-	return impString.data[0 .. impString.length].idup;
+	return impString.data[0..impString.length].idup;
 }
 
-immutable(vec3[]) conv(in aiVector3D* ptr, uint length) pure nothrow
+immutable(vec3[]) conv(const aiVector3D* ptr, uint length) pure nothrow
 {
-	return ptr[0 .. length].map!conv.array;
+	return ptr.toArray(length).map!conv.array;
 }
 
 immutable(vec3) conv(const aiVector3D vector) pure nothrow
@@ -31,34 +35,36 @@ immutable(Scene) conv(const aiScene scene) pure
 
 immutable (Mesh[]) conv(const aiMesh** ptr, const uint length) pure
 {
-	return ptr[0..length].map!(mesh=>conv(*mesh)).array;
+	return ptr.toArray(length).map!(mesh=>conv(*mesh)).array;
 }
 
 immutable (Mesh) conv(const aiMesh mesh) pure
 {
 	with(mesh)
 	{
-		return Mesh(mName.conv,
-		    conv(mVertices,  mNumVertices),
-		    conv(mNormals,  mNumVertices),
-		    conv(mTangents,  mNumVertices),
-		    conv(mBitangents,  mNumVertices),
-		    mFaces.conv(mNumFaces),
-		    mColors.conv( mNumVertices),
-		    conv(mTextureCoords,  mNumVertices, mNumUVComponents),
-		    mBones.conv(mNumBones),
-		    mMaterialIndex);
+		return Mesh(
+			mName.conv,
+			conv(mVertices, mNumVertices),
+			conv(mNormals, mNumVertices),
+			conv(mTangents, mNumVertices),
+			conv(mBitangents, mNumVertices),
+			mFaces.conv(mNumFaces),
+			mColors.conv(mNumVertices),
+			conv(mTextureCoords, mNumVertices, mNumUVComponents),
+			mBones.conv(mNumBones),
+			mMaterialIndex
+		    );
 	}
 }
 
 immutable (Face[]) conv(const aiFace* ptr, const uint length) pure nothrow
 {
-	return ptr[0..length].map!conv.array;
+	return ptr.toArray(length).map!conv.array;
 }
 
 immutable (Face) conv(const aiFace face) pure nothrow
 {
-	return Face(face.mIndices[0..face.mNumIndices].idup);
+	return Face(face.mIndices.toArray(face.mNumIndices).idup);
 }
 
 immutable (Color[][]) conv(const aiColor4D*[] ptrArray, const uint length) pure nothrow
@@ -73,7 +79,7 @@ immutable (Color[][]) conv(const aiColor4D*[] ptrArray, const uint length) pure 
 
 immutable (Color[]) conv(const aiColor4D* ptr, const uint length) pure nothrow
 {
-	return ptr[0..length].map!conv.array;
+	return ptr.toArray(length).map!conv.array;
 }
 
 immutable (Color) conv(aiColor4D color) pure nothrow @nogc
@@ -81,9 +87,9 @@ immutable (Color) conv(aiColor4D color) pure nothrow @nogc
 	return Color(color.r, color.g, color.b, color.a);
 }
 
-TexCoordSet[] conv(const aiVector3D*[] ptr, const uint length, const uint[] numComponents) pure
+TexCoordSet[] conv(const aiVector3D*[] ptrArray, const uint length, const uint[] numComponents) pure
 {
-	auto uvs = ptr.map!(set=>set[0..length]);
+	auto uvs = ptrArray.map!(set=>set.toArray(length));
 
 	return zip(uvs, numComponents)
 			.map!((set)=>conv(set[0], set[1]))
@@ -97,12 +103,12 @@ TexCoordSet conv(const aiVector3D[] uvSet, uint componentCount) pure nothrow
 
 immutable (Bone[]) conv(const aiBone** impBones, uint boneCount) pure nothrow
 {
-	return impBones[0 .. boneCount].map!(bone=>conv(*bone)).array;
+	return impBones.toArray(boneCount).map!(bone=>conv(*bone)).array;
 }
 
 immutable (Bone) conv(const aiBone impBone) pure nothrow
 {
-	return Bone(impBone.mName.conv, impBone.mWeights[0 .. impBone.mNumWeights].conv);
+	return Bone(impBone.mName.conv, impBone.mWeights.toArray(impBone.mNumWeights).conv);
 }
 
 immutable(VertexWeight[]) conv(const aiVertexWeight[] impWeights) pure nothrow
