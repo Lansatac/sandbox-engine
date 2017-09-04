@@ -14,6 +14,9 @@ import components.registry;
 import components.transform;
 import components.meshRenderer;
 
+import render.opengl.OpenGLMeshRepository;
+import render.opengl.Mesh;
+
 class Camera : Component
 {
 	this(Scene scene, objectID objID)
@@ -26,6 +29,11 @@ class Camera : Component
 	float fov = 70f;
 	float nearClip = 0.1f;
 	float farClip = 1000f;
+
+	void SetRepo(OpenGLMeshRepository meshRepo)
+	{
+		this.meshRepo = meshRepo;
+	}
 
 	@property Transform transform()
 	{
@@ -53,6 +61,7 @@ class Camera : Component
 
 		foreach(renderer; renderers)
 		{
+			auto glMesh = meshRepo.GetMesh(renderer.Mesh);
 			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LESS);
 
@@ -70,7 +79,7 @@ class Camera : Component
 
 			foreach(
 				mesh, normals, colors, shader, faceCount;
-			 	zip(renderer.meshs, renderer.normals, renderer.meshColors, renderer.shaders.chain(renderer.shaders.back.repeat), renderer.triangleCounts))
+			 	zip(glMesh.vertexbuffers, glMesh.normalbuffers, glMesh.colorbuffers, renderer.shaders.chain(renderer.shaders.back.repeat), glMesh.triangleCounts))
 			{
 
 				glUseProgram(shader);
@@ -141,5 +150,6 @@ class Camera : Component
 	//}
 
 private:
-	private Transform _transform;
+	Transform _transform;
+	OpenGLMeshRepository meshRepo;
 }

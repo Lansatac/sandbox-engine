@@ -12,6 +12,9 @@ import derelict.opengl3.gl3;
 import gl3n.linalg;
 import gl3n.math;
 
+import assimp.AssImpMeshDataRepository;
+import render.opengl.OpenGLMeshRepository;
+
 import timeAccumulator;
 import window;
 import shader;
@@ -44,6 +47,10 @@ int main()
 	logf(LogLevel.info, "OpenGL Version: %s", glGetString(GL_VERSION).fromStringz);
 
     bool glLoggingEnabled = true;
+    version(linux)
+    {
+        glLoggingEnabled = false;
+    }
     version(OSX)
     {
         glLoggingEnabled = false;
@@ -54,17 +61,22 @@ int main()
         glDebugMessageCallback(&loggingCallbackOpenGL, null);
     }
 
+    auto meshDataRepo = new AssImpMeshDataRepository();
+    auto meshRepo = new OpenGLMeshRepository(meshDataRepo);
+
 
 	Scene scene = new Scene(window);
 	auto camera = scene.createObject!(Transform, Camera, CameraControl);
 	auto gameObject = scene.createObject!(Transform, MeshRenderer);
+	scene.getComponent!(MeshRenderer)(gameObject).Mesh = meshRepo.AquireInstance(meshDataRepo.Load("assets/dragon_recon/dragon_vrip_res4.ply"));
+	scene.getComponent!(Camera)(camera).SetRepo(meshRepo);
 
 	window.SetActiveScene(scene);
 
 	scene.getComponent!(CameraControl)(camera).window = window.window;
 
 	auto gameObjectMesh = scene.getComponent!(MeshRenderer)(gameObject);
-	gameObjectMesh.loadMesh();
+	
 	gameObjectMesh.loadMaterial("shaders/simpleLit.vshader", "shaders/simpleLit.fshader");
 
 	auto gameObjectTransform = scene.getComponent!(Transform)(gameObject);
