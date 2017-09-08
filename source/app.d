@@ -26,11 +26,25 @@ import components.meshRenderer;
 
 int main()
 {
-	DerelictASSIMP3.load();
+	version(Windows)
+	{
+		DerelictASSIMP3.load("libs/assimp.dll");
+	}
+	else
+	{
+		DerelictASSIMP3.load();
+	}
 
 	DerelictGL3.load();
-	
-	DerelictGLFW3.load();
+
+	version(Windows)
+	{
+		DerelictGLFW3.load("libs/glfw3.dll");
+	}
+	else
+	{
+		DerelictGLFW3.load();
+	}
 
 	// initialize glfw
 	if (!glfwInit())
