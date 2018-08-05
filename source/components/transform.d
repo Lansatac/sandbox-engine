@@ -7,6 +7,7 @@ import scene.gameObject;
 import components.component;
 import components.registry;
 
+@safe
 class Transform : Component
 {
 	this(Scene scene, objectID objID)

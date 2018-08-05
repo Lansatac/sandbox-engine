@@ -13,6 +13,7 @@ import scene.gameObject;
 
 import window;
 
+@trusted
 class GlfwWindow : Window
 {
 	int width()
@@ -56,23 +57,19 @@ class GlfwWindow : Window
 		registry.remove(window);
 	}
 
-	void SetActiveScene(Scene scene)
-	{
-		_scene = scene;
-	}
-
-	void RenderFrame()
+	@trusted
+	void RenderFrame(Scene scene)
 	in
 	{
 		assert(!Closed);
-		assert(_scene);
+		assert(scene);
 	}
 	body
 	{
-
 	    glfwMakeContextCurrent(window);
+		glClearColor(0.2,0.4,0.4,1);
 
-		_scene.render(this);
+		scene.render(this);
 
 		glfwSwapBuffers(window);
 

@@ -7,6 +7,7 @@ import resources.MeshRepository;
 
 alias MeshData = MeshRepository.MeshData;
 
+@trusted
 class AssImpMeshDataRepository : MeshRepository.Data
 {
 	import gl3n.linalg;

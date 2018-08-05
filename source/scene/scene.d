@@ -14,10 +14,12 @@ import components.cameraControl;
 import window;
 import scene.gameObject;
 
+@safe
 class Scene
 {
 	alias registry this;
 
+	@trusted
 	this(Window window)
 	{
 		objects = make!(Array!objectID)();
@@ -28,6 +30,8 @@ class Scene
 	{
 		return _registry;
 	}
+
+	@trusted
 	objectID createObject()
 	{
 		auto newObject = nextID++;
@@ -35,6 +39,7 @@ class Scene
 		return newObject;
 	}
 
+	@trusted
 	objectID createObject(C...)()
 	{
 		auto newObject = nextID++;
@@ -46,6 +51,7 @@ class Scene
 		return newObject;
 	}
 
+	@trusted
 	void update()
 	{
 		double current = glfwGetTime();

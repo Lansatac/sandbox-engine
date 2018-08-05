@@ -4,6 +4,7 @@ import components.component;
 import scene.scene;
 import scene.gameObject;
 
+@safe
 class UpdatingComponent : Component
 {
 	void updateComponent(double deltaTime)

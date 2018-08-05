@@ -13,6 +13,7 @@ import render.opengl.Mesh;;
 alias MeshInstance = MeshRepository.MeshInstance;
 alias MeshData = MeshRepository.MeshData;
 
+@trusted
 class OpenGLMeshRepository : MeshRepository.Instances
 {
 	this(MeshRepository.Data dataRepository)

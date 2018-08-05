@@ -5,6 +5,7 @@ import std.string;
 
 import derelict.glfw3;
 
+@trusted
 class GlfwContext
 {
 	this()
@@ -39,7 +40,7 @@ class GlfwContext
 		glfwTerminate();
 	}
 
-	float GetTime()
+	@trusted float GetTime()
 	{
 		return glfwGetTime();
 	}

@@ -18,6 +18,7 @@ import components.meshRenderer;
 import render.opengl.OpenGLMeshRepository;
 import render.opengl.Mesh;
 
+@safe
 class Camera : Component
 {
 	this(Scene scene, objectID objID)
@@ -46,6 +47,7 @@ class Camera : Component
 		return mat4.look_at(_transform.position, _transform.position + _transform.forward, _transform.up);
 	}
 
+	@trusted
 	void render(Window window)
 	{
 		import derelict.glfw3.glfw3;

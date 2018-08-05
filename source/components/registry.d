@@ -7,6 +7,7 @@ import scene.scene;
 import scene.gameObject;
 import components.component;
 
+@safe
 class Registry
 {
 	this(Scene scene)

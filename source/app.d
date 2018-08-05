@@ -25,45 +25,11 @@ import components.cameraControl;
 import components.camera;
 import components.meshRenderer;
 
+@safe
 int main()
 {
-	version(Windows)
-	{
-		DerelictASSIMP3.load("libs/assimp.dll");
-	}
-	else
-	{
-		DerelictASSIMP3.load();
-	}
-
-	DerelictGL3.load();
-
 	GlfwContext glfw = new GlfwContext();
-
-
-	auto window = new GlfwWindow(glfw, 1024, 768, "Hi!", null);
-	
-
-	DerelictGL3.reload();
-	logf(LogLevel.info, "OpenGL Version: %s", glGetString(GL_VERSION).fromStringz);
-
-    bool glLoggingEnabled = true;
-    version(linux)
-    {
-        glLoggingEnabled = false;
-    }
-    version(OSX)
-    {
-        glLoggingEnabled = false;
-    }
-	version(Linux)
-	{
-		if(glLoggingEnabled)
-		{
-			glEnable(GL_DEBUG_OUTPUT);
-			glDebugMessageCallback(&loggingCallbackOpenGL, null);
-		}
-	}
+	auto window = initOpenGL(glfw);
 
     auto meshDataRepo = new AssImpMeshDataRepository();
     auto meshRepo = new OpenGLMeshRepository(meshDataRepo);
@@ -75,8 +41,6 @@ int main()
 	scene.getComponent!(MeshRenderer)(gameObject).Mesh = meshRepo.AquireInstance(meshDataRepo.Load("assets/dragon_recon/dragon_vrip_res4.ply"));
 	scene.getComponent!(Camera)(camera).SetRepo(meshRepo);
 
-	window.SetActiveScene(scene);
-
 	scene.getComponent!(CameraControl)(camera).window = window.window;
 
 	auto gameObjectMesh = scene.getComponent!(MeshRenderer)(gameObject);
@@ -87,7 +51,6 @@ int main()
 	gameObjectTransform.position = vec3(0f, -10f, -10f);
 	gameObjectTransform.scale = vec3(200f, 200f, 200f);
 
-	glClearColor(0.2,0.4,0.4,1);
 
 	auto camTransform = scene.getComponent!Transform(camera);
 	camTransform.position = vec3(0,0,5);
@@ -112,10 +75,53 @@ int main()
 			fps.reset;
 		}
 
-		window.RenderFrame();
+		window.RenderFrame(scene);
 	}
 
 	return 0;
+}
+
+@trusted
+GlfwWindow initOpenGL(GlfwContext glfw)
+{
+	version(Windows)
+	{
+		DerelictASSIMP3.load("libs/assimp.dll");
+	}
+	else
+	{
+		DerelictASSIMP3.load();
+	}
+
+	DerelictGL3.load();
+
+
+
+	auto window = new GlfwWindow(glfw, 1024, 768, "Hi!", null);
+
+
+	DerelictGL3.reload();
+	logf(LogLevel.info, "OpenGL Version: %s", glGetString(GL_VERSION).fromStringz);
+
+    bool glLoggingEnabled = true;
+    version(linux)
+    {
+        glLoggingEnabled = false;
+    }
+    version(OSX)
+    {
+        glLoggingEnabled = false;
+    }
+	version(Linux)
+	{
+		if(glLoggingEnabled)
+		{
+			glEnable(GL_DEBUG_OUTPUT);
+			glDebugMessageCallback(&loggingCallbackOpenGL, null);
+		}
+	}
+
+	return window;
 }
 
 extern (C) nothrow void loggingCallbackOpenGL( GLenum source, GLenum type, GLuint id, GLenum severity,

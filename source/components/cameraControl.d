@@ -11,6 +11,7 @@ import derelict.glfw3;
 
 import gl3n.math;
 
+@safe
 class CameraControl : UpdatingComponent
 {
 	this(Scene scene, objectID objID)
@@ -22,6 +23,7 @@ class CameraControl : UpdatingComponent
 
 	double speed = .1f;
 
+	@trusted
 	override void update(double deltaTime)
 	{
 

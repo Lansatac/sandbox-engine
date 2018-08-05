@@ -2,6 +2,7 @@ module timeAccumulator;
 
 import std.math;
 
+@safe
 struct TimeAccumulator
 {
 	void addTime(float delta)

@@ -8,6 +8,7 @@ import std.experimental.logger;
 
 import derelict.opengl3.gl3;
 
+@safe
 GLuint LoadShader(string vertexFilePath, string fragmentFilePath)
 {
 	string vertexShaderCode = readText(vertexFilePath);
@@ -20,6 +21,7 @@ GLuint LoadShader(string vertexFilePath, string fragmentFilePath)
 	return LinkProgram(vertexShaderID, fragmentShaderID);
 }
 
+@trusted
 GLuint CompileProgram(alias GLenum ShaderType)(lazy string programName, string program)
 if(validShaderType(ShaderType))
 {
@@ -44,7 +46,7 @@ if(validShaderType(ShaderType))
 	return ShaderID;
 }
 
-
+@trusted
 GLuint LinkProgram(GLuint vertex, GLuint fragment)
 {
 	GLint Result = GL_FALSE;

@@ -4,6 +4,7 @@ import scene.scene;
 import scene.gameObject;
 import components.registry;
 
+@safe
 abstract class Component
 {
 	protected this(Scene scene, objectID objID)

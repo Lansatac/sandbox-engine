@@ -12,6 +12,7 @@ import components.component;
 import shader;
 import resources.MeshRepository;
 
+@safe
 class MeshRenderer : Component
 {
 	this(Scene scene, objectID objID)
