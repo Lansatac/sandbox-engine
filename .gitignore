@@ -34,3 +34,4 @@ __dummy.html
 cov/
 *.sln
 .vs/
+*.exe
