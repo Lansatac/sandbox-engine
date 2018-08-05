@@ -20,7 +20,6 @@ class Scene
 
 	this(Window window)
 	{
-		_window = window;
 		objects = make!(Array!objectID)();
 		_registry = new Registry(this);
 	}
@@ -29,12 +28,6 @@ class Scene
 	{
 		return _registry;
 	}
-
-	@property Window window()
-	{
-		return _window;
-	}
-
 	objectID createObject()
 	{
 		auto newObject = nextID++;
@@ -73,7 +66,7 @@ class Scene
 		}
 	}
 
-	void render()
+	void render(Window window)
 	{
 		update();
 
@@ -81,14 +74,13 @@ class Scene
 		//cameras.sort();
 		foreach(camera; cameras)
 		{
-			camera.render();
+			camera.render(window);
 		}
 	}
 
 private:
 	Array!objectID objects;
 	Registry _registry;
-	Window _window;
 	objectID nextID;
 
 	double lastTime;

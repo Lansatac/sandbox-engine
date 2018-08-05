@@ -7,6 +7,7 @@ import gl3n.linalg;
 import gl3n.math;
 import derelict.opengl3.gl3;
 
+import window;
 import scene.scene;
 import scene.gameObject;
 import components.component;
@@ -45,13 +46,13 @@ class Camera : Component
 		return mat4.look_at(_transform.position, _transform.position + _transform.forward, _transform.up);
 	}
 
-	void render()
+	void render(Window window)
 	{
 		import derelict.glfw3.glfw3;
 		double time = glfwGetTime();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		mat4 Projection = mat4.perspective(scene.window.width, scene.window.height,  fov, nearClip, farClip);
+		mat4 Projection = mat4.perspective(window.width, window.height,  fov, nearClip, farClip);
 
 		mat4 View = viewMatrix;
 

@@ -6,13 +6,14 @@ import std.experimental.logger;
 
 import core.time;
 
-import derelict.glfw3;
 import derelict.assimp3.assimp;
 import derelict.opengl3.gl3;
 import gl3n.linalg;
 import gl3n.math;
 
 import assimp.AssImpMeshDataRepository;
+import glfw.GlfwContext;
+import glfw.GlfwWindow;
 import render.opengl.OpenGLMeshRepository;
 
 import timeAccumulator;
@@ -37,25 +38,11 @@ int main()
 
 	DerelictGL3.load();
 
-	version(Windows)
-	{
-		DerelictGLFW3.load("libs/glfw3.dll");
-	}
-	else
-	{
-		DerelictGLFW3.load();
-	}
-
-	// initialize glfw
-	if (!glfwInit())
-		throw new Exception("Failed to Initialize GLFW!");
-    glfwSetErrorCallback(&error_callback);
-
-	scope(exit)glfwTerminate();
+	GlfwContext glfw = new GlfwContext();
 
 
-	auto window = new Window(1024, 768, "Hi!", null);
-
+	auto window = new GlfwWindow(glfw, 1024, 768, "Hi!", null);
+	
 
 	DerelictGL3.reload();
 	logf(LogLevel.info, "OpenGL Version: %s", glGetString(GL_VERSION).fromStringz);
@@ -106,7 +93,7 @@ int main()
 	camTransform.position = vec3(0,0,5);
 	camTransform.rotation = quat.euler_rotation(0,PI,0);
 
-	double lastTime = glfwGetTime();
+	double lastTime = glfw.GetTime();
 	double speed = 2f;
 
 	auto fps = TimeAccumulator();
@@ -114,7 +101,7 @@ int main()
 	// Compute time difference between current and last frame
 	while(!window.Closed)
 	{
-		double currentTime = glfwGetTime();
+		double currentTime = glfw.GetTime();
 		double deltaTime = double(currentTime - lastTime);
 		scope(exit)lastTime = currentTime;
 
@@ -129,15 +116,6 @@ int main()
 	}
 
 	return 0;
-}
-
-
-extern(C) void error_callback(int error, const (char)* description) nothrow
-{
-	try{
-    	errorf("GLFW Error %s:\n%s", error, description.fromStringz);
-	}
-	catch(Throwable){}
 }
 
 extern (C) nothrow void loggingCallbackOpenGL( GLenum source, GLenum type, GLuint id, GLenum severity,
