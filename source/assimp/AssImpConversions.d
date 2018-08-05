@@ -8,7 +8,7 @@ import resources.Mesh;
 import std.algorithm;
 import std.range;
 
-const (T[]) toArray(T)(const T* ptr, ulong length) pure nothrow
+const (T[]) toArray(T)(const T* ptr, uint length) pure nothrow
 {
 	return ptr == null ? [] : ptr[0..length];
 }
