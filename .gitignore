@@ -33,3 +33,4 @@ __dummy.html
 # Ignore coverage files
 cov/
 *.sln
+.vs/
