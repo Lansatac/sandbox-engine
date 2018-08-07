@@ -5,8 +5,8 @@ import derelict.assimp3.types;
 
 import gl3n.linalg;
 
-import resources.MeshRepository;
-import resources.Mesh;
+import resources.mesh.MeshRepository;
+import resources.mesh.Mesh;
 
 import render.opengl.Mesh;;
 

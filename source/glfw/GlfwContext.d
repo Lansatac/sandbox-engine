@@ -4,9 +4,13 @@ import std.experimental.logger;
 import std.string;
 
 import derelict.glfw3;
+import window.window;
+import window.windowProvider;
+
+import glfw.GlfwWindow;
 
 @trusted
-class GlfwContext
+class GlfwContext : WindowProvider
 {
 	this()
 	{
@@ -40,9 +44,20 @@ class GlfwContext
 		glfwTerminate();
 	}
 
-	@trusted float GetTime()
+	float GetTime()
 	{
 		return glfwGetTime();
+	}
+
+	Window CreateWindow(int width, int height, string title, Window parent)
+	{
+	    glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE); // To make MacOS happy; should not be needed
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
+
+		return new GlfwWindow(this, width, height, title, parent);
 	}
 }
 

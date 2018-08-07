@@ -10,7 +10,7 @@ import scene.scene;
 import scene.gameObject;
 import components.component;
 import shader;
-import resources.MeshRepository;
+import resources.mesh.MeshRepository;
 
 @safe
 class MeshRenderer : Component

@@ -6,18 +6,17 @@ import std.experimental.logger;
 
 import core.time;
 
-import derelict.assimp3.assimp;
-import derelict.opengl3.gl3;
 import gl3n.linalg;
 import gl3n.math;
 
 import assimp.AssImpMeshDataRepository;
+import render.opengl.openGLContext;
 import glfw.GlfwContext;
 import glfw.GlfwWindow;
 import render.opengl.OpenGLMeshRepository;
 
 import timeAccumulator;
-import window;
+import window.window;
 import shader;
 import scene.scene;
 import components.transform;
@@ -28,8 +27,11 @@ import components.meshRenderer;
 @safe
 int main()
 {
+	
+
 	GlfwContext glfw = new GlfwContext();
-	auto window = initOpenGL(glfw);
+	OpenGLContext gl = new OpenGLContext(glfw);
+	auto window = gl.CreateWindow(1024, 768, "Hi!", null);
 
     auto meshDataRepo = new AssImpMeshDataRepository();
     auto meshRepo = new OpenGLMeshRepository(meshDataRepo);
@@ -41,7 +43,7 @@ int main()
 	scene.getComponent!(MeshRenderer)(gameObject).Mesh = meshRepo.AquireInstance(meshDataRepo.Load("assets/dragon_recon/dragon_vrip_res4.ply"));
 	scene.getComponent!(Camera)(camera).SetRepo(meshRepo);
 
-	scene.getComponent!(CameraControl)(camera).window = window.window;
+	//scene.getComponent!(CameraControl)(camera).window = window.window;
 
 	auto gameObjectMesh = scene.getComponent!(MeshRenderer)(gameObject);
 	
@@ -79,83 +81,4 @@ int main()
 	}
 
 	return 0;
-}
-
-@trusted
-GlfwWindow initOpenGL(GlfwContext glfw)
-{
-	version(Windows)
-	{
-		DerelictASSIMP3.load("libs/assimp.dll");
-	}
-	else
-	{
-		DerelictASSIMP3.load();
-	}
-
-	DerelictGL3.load();
-
-
-
-	auto window = new GlfwWindow(glfw, 1024, 768, "Hi!", null);
-
-
-	DerelictGL3.reload();
-	logf(LogLevel.info, "OpenGL Version: %s", glGetString(GL_VERSION).fromStringz);
-
-    bool glLoggingEnabled = true;
-    version(linux)
-    {
-        glLoggingEnabled = false;
-    }
-    version(OSX)
-    {
-        glLoggingEnabled = false;
-    }
-	version(Linux)
-	{
-		if(glLoggingEnabled)
-		{
-			glEnable(GL_DEBUG_OUTPUT);
-			glDebugMessageCallback(&loggingCallbackOpenGL, null);
-		}
-	}
-
-	return window;
-}
-
-extern (C) nothrow void loggingCallbackOpenGL( GLenum source, GLenum type, GLuint id, GLenum severity,
-                                               GLsizei length, const(GLchar)* message, GLvoid* userParam )
-{
-    try
-    {
-    	switch(type)
-    	{
-	    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-    	case GL_DEBUG_TYPE_ERROR:
-    		errorf("GL Error %s", message.fromStringz);
-    		break;
-	    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-	    case GL_DEBUG_TYPE_PORTABILITY:
-	    case GL_DEBUG_TYPE_PERFORMANCE:
-    		warningf("GL Warning %s", message.fromStringz);
-    		break;
-	    case GL_DEBUG_TYPE_MARKER:
-	    case GL_DEBUG_TYPE_PUSH_GROUP:
-	    case GL_DEBUG_TYPE_POP_GROUP:
-	    case GL_DEBUG_TYPE_OTHER:
-    	default:
-        	logf("GL Info: %s", message.fromStringz);
-    	}
-
-
-    }
-    catch(Throwable){}
-}
-
-void logError()
-{
-	auto errorCode = glGetError();
-	//if(errorCode != GL_NO_ERROR)
-		writefln("%s", glGetError());
 }

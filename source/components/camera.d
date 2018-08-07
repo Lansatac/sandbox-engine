@@ -7,7 +7,7 @@ import gl3n.linalg;
 import gl3n.math;
 import derelict.opengl3.gl3;
 
-import window;
+import window.window;
 import scene.scene;
 import scene.gameObject;
 import components.component;

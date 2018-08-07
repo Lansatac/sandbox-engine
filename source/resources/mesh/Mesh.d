@@ -1,4 +1,4 @@
-module resources.Mesh;
+module resources.mesh.Mesh;
 
 align(1) struct Color
 {

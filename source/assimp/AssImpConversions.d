@@ -3,7 +3,7 @@ module assimp.AssImpConversions;
 import derelict.assimp3.assimp;
 import gl3n.linalg;
 
-import resources.Mesh;
+import resources.mesh.Mesh;
 
 import std.algorithm;
 import std.range;

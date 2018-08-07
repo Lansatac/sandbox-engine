@@ -2,8 +2,8 @@ module assimp.AssImpMeshDataRepository;
 
 import assimp.AssImpConversions;
 
-import resources.Mesh;
-import resources.MeshRepository;
+import resources.mesh.Mesh;
+import resources.mesh.MeshRepository;
 
 alias MeshData = MeshRepository.MeshData;
 
@@ -14,6 +14,18 @@ class AssImpMeshDataRepository : MeshRepository.Data
 	import derelict.assimp3.assimp;
 	
 	import std.typecons;
+
+	this()
+	{
+		version(Windows)
+		{
+			DerelictASSIMP3.load("libs/assimp.dll");
+		}
+		else
+		{
+			DerelictASSIMP3.load();
+		}
+	}
 
 	MeshData Load(string path)
 	{

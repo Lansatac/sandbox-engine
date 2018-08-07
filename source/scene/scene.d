@@ -11,7 +11,7 @@ import derelict.glfw3.glfw3;
 import components.registry;
 import components.camera;
 import components.cameraControl;
-import window;
+import window.window;
 import scene.gameObject;
 
 @safe

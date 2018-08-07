@@ -1,4 +1,4 @@
-module window;
+module window.window;
 
 import scene.scene;
 

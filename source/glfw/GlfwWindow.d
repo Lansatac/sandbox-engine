@@ -11,7 +11,7 @@ import derelict.opengl3.gl3;
 import scene.scene;
 import scene.gameObject;
 
-import window;
+import window.window;
 
 @trusted
 class GlfwWindow : Window
