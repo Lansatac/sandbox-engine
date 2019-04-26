@@ -2,6 +2,8 @@ sandbox-engine
 *.sublime-project
 *.sublime-workspace
 
+*.DS_Store
+
 *.o
 *.obj
 
