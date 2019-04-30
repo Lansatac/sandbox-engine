@@ -20,7 +20,7 @@ class Scene
 	alias registry this;
 
 	@trusted
-	this(Window window)
+	this()
 	{
 		objects = make!(Array!objectID)();
 		_registry = new Registry(this);

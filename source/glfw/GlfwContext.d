@@ -29,13 +29,6 @@ class GlfwContext : WindowProvider
 			throw new Exception("Failed to Initialize GLFW!");
 		glfwSetErrorCallback(&error_callback);
 
-
-	    glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE); // To make MacOS happy; should not be needed
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
-
 		logf(LogLevel.trace, "GLFW Initialized");
 	}
 
@@ -51,12 +44,6 @@ class GlfwContext : WindowProvider
 
 	Window CreateWindow(int width, int height, string title, Window parent)
 	{
-	    glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE); // To make MacOS happy; should not be needed
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
-
 		return new GlfwWindow(this, width, height, title, parent);
 	}
 }

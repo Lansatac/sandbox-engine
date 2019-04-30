@@ -27,17 +27,16 @@ import components.meshRenderer;
 @safe
 int main()
 {
-	
-
 	GlfwContext glfw = new GlfwContext();
 	OpenGLContext gl = new OpenGLContext(glfw);
 	auto window = gl.CreateWindow(1024, 768, "Hi!", null);
+	auto window2 = gl.CreateWindow(1024, 768, "Hi2!", null);
 
     auto meshDataRepo = new AssImpMeshDataRepository();
     auto meshRepo = new OpenGLMeshRepository(meshDataRepo);
 
 
-	Scene scene = new Scene(window);
+	Scene scene = new Scene();
 	auto camera = scene.createObject!(Transform, Camera, CameraControl);
 	auto gameObject = scene.createObject!(Transform, MeshRenderer);
 	scene.getComponent!(MeshRenderer)(gameObject).Mesh = meshRepo.AquireInstance(meshDataRepo.Load("assets/dragon_recon/dragon_vrip_res4.ply"));
@@ -77,7 +76,8 @@ int main()
 			fps.reset;
 		}
 
-		window.RenderFrame(scene);
+		if(!window.Closed)window.RenderFrame(scene);
+		if(!window2.Closed) window2.RenderFrame(scene);
 	}
 
 	return 0;

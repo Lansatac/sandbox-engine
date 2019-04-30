@@ -30,6 +30,7 @@ class GlfwWindow : Window
 	{
 		_height = height;
 		_width = width;
+		_title = title;
 
 	    glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
@@ -38,7 +39,7 @@ class GlfwWindow : Window
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 
 	    /* Create a windowed mode window and its OpenGL context */
-	    window = glfwCreateWindow(width, height, title.toStringz, null, null);
+	    window = glfwCreateWindow(_width, _height, _title.toStringz, null, null);
 	    if (!window)
 	    {
 	        throw new Exception("Failed to create window");
@@ -50,11 +51,6 @@ class GlfwWindow : Window
 	    glfwMakeContextCurrent(window);
 
 	    registry[window] = this;
-	}
-
-	~this()
-	{
-		registry.remove(window);
 	}
 
 	@trusted
@@ -80,13 +76,19 @@ class GlfwWindow : Window
 			glfwSetWindowShouldClose(window, 1);	    
 		}
 
-		if(Closed)
+		if(glfwWindowShouldClose(window) == GLFW_TRUE)
 		{
-			glfwDestroyWindow(window);
-			window = null;
+			Close();
 		}
 
     }
+
+	void Close()
+	{
+		registry.remove(window);
+		glfwDestroyWindow(window);
+		window = null;
+	}
 
     bool Closed()
     {
@@ -110,6 +112,7 @@ private:
 
 	int _width;
 	int _height;
+	string _title;
 }
 
 

@@ -26,8 +26,7 @@ class CameraControl : UpdatingComponent
 	@trusted
 	override void update(double deltaTime)
 	{
-		//
-		//auto delta = deltaTime * speed;
+		auto delta = deltaTime * speed;
 		//
 		//if (glfwGetKey(window, GLFW_KEY_W ) == GLFW_PRESS){
 		//    _transform.position = _transform.position + _transform.forward * delta;
