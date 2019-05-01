@@ -1,17 +1,15 @@
-module window.window;
+//module window.window;
 
-import scene.scene;
+//import scene.scene;
 
-@safe
-interface Window
-{
-	int width();
-	int height();
+//@safe
+//interface Window
+//{
+//	int width();
+//	int height();
 
-	void Close();
-	bool Closed();
+//	void Close();
+//	bool Closed();
 
-	void Resize(int newWidth, int newHeight) nothrow;
-
-	void RenderFrame(Scene scene);
-}
+//	void Resize(int newWidth, int newHeight) nothrow;
+//}

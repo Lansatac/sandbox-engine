@@ -6,16 +6,11 @@ import std.range;
 import std.string;
 import std.experimental.logger;
 
-import derelict.glfw3.glfw3;
-
 import components.registry;
-import components.camera;
-import components.cameraControl;
-import window.window;
 import scene.gameObject;
 
 @safe
-class Scene
+class Scene(TComponents...)
 {
 	alias registry this;
 
@@ -23,10 +18,10 @@ class Scene
 	this()
 	{
 		objects = make!(Array!objectID)();
-		_registry = new Registry(this);
+		_registry = new Registry!(TComponents)();
 	}
 
-	@property Registry registry()
+	@property Registry!(TComponents) registry()
 	{
 		return _registry;
 	}
@@ -39,55 +34,20 @@ class Scene
 		return newObject;
 	}
 
-	@trusted
-	objectID createObject(C...)()
-	{
-		auto newObject = nextID++;
-		objects.insertBack(newObject);
-		foreach(t; C)
-		{
-			_registry.createComponent!(t)(newObject);
-		}
-		return newObject;
-	}
-
-	@trusted
-	void update()
-	{
-		double current = glfwGetTime();
-		double delta = current - lastTime;
-		lastTime = current;
-
-		auto toUpdate = _registry.getComponentsOfType!CameraControl();
-		foreach(updatee; toUpdate)
-		{
-			try
-			{
-				updatee.updateComponent(lastTime);
-			}
-			catch(Exception e)
-			{
-				error(format("Exception in update:\n%s", e));
-			}
-		}
-	}
-
-	void render(Window window)
-	{
-		update();
-
-		auto cameras = _registry.getComponentsOfType!Camera().array;
-		//cameras.sort();
-		foreach(camera; cameras)
-		{
-			camera.render(window);
-		}
-	}
+	//@trusted
+	//objectID createObject(C...)()
+	//{
+	//	auto newObject = nextID++;
+	//	objects.insertBack(newObject);
+	//	foreach(t; C)
+	//	{
+	//		_registry.addComponent!(t)(newObject);
+	//	}
+	//	return newObject;
+	//}
 
 private:
 	Array!objectID objects;
-	Registry _registry;
+	Registry!(TComponents) _registry;
 	objectID nextID;
-
-	double lastTime;
 }

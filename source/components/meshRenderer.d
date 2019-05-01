@@ -15,9 +15,8 @@ import resources.mesh.MeshRepository;
 @safe
 class MeshRenderer : Component
 {
-	this(Scene scene, objectID objID)
+	this()
 	{
-		super(scene, objID);
 	}
 
 	@property MeshRepository.MeshInstance Mesh()

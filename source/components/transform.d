@@ -10,9 +10,8 @@ import components.registry;
 @safe
 class Transform : Component
 {
-	this(Scene scene, objectID objID)
+	this()
 	{
-		super(scene, objID);
 	}
 
 	@property vec3 position()

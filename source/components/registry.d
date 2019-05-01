@@ -5,36 +5,51 @@ import std.algorithm;
 
 import scene.scene;
 import scene.gameObject;
-import components.component;
+import components;
 
 @safe
-class Registry
+class Registry(TComponent...)
 {
-	this(Scene scene)
+	this()
 	{
-		_scene = scene;
 	}
 
-	TComponent createComponent(TComponent:Component)(objectID objID)
+	static foreach(ComponentType; TComponent)
 	{
-		auto component = new TComponent(_scene, objID);
-		registry[typeid(TComponent)] ~= component;
-		return component;
+		mixin(
+			ComponentType.stringof ~ " add(objectID objID, " ~ ComponentType.stringof ~ " component)" ~
+			"{" ~
+				ComponentType.stringof ~ "registry[objID] = component;" ~
+				"return component;" ~
+			"}"
+		);
 	}
 
-	TComponent getComponent(TComponent:Component)(objectID objID)
+	static foreach(ComponentType; TComponent)
 	{
-		return getComponentsOfType!TComponent.filter!(component=>component.ObjectID == objID).front;
+		mixin(
+			ComponentType.stringof ~ " get" ~ ComponentType.stringof ~ "(objectID objID)" ~
+			"{" ~
+				"return " ~ ComponentType.stringof ~ "registry[objID];" ~
+			"}"
+		);
 	}
 
-	auto getComponentsOfType(TComponent:Component)()
+	static foreach(ComponentType; TComponent)
 	{
-		auto list = *(typeid(TComponent) in registry);
-		return list.map!(component => cast(TComponent)component);
+		mixin(
+			ComponentType.stringof ~ "[] getAll" ~ ComponentType.stringof ~ "(objectID objID)\n" ~
+			"{" ~
+				"import std.range;" ~
+				"return " ~ ComponentType.stringof ~ "registry.byValue().array;" ~
+			"}"
+		);
 	}
-
 
 private:
-	Component[][TypeInfo] registry;
-	Scene _scene;
+
+	static foreach(ComponentType; TComponent)
+	{
+		mixin(ComponentType.stringof ~ "[objectID] " ~ ComponentType.stringof ~ "registry;");
+	}
 }

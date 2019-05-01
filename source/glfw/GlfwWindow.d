@@ -11,10 +11,8 @@ import derelict.opengl3.gl3;
 import scene.scene;
 import scene.gameObject;
 
-import window.window;
-
 @trusted
-class GlfwWindow : Window
+class GlfwWindow
 {
 	int width()
 	{
@@ -26,7 +24,7 @@ class GlfwWindow : Window
 		return _height;
 	}
 
-	this (GlfwContext context, int width, int height, string title, Window parent)
+	this (GlfwContext context, int width, int height, string title)
 	{
 		_height = height;
 		_width = width;
@@ -39,44 +37,36 @@ class GlfwWindow : Window
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 
 	    /* Create a windowed mode window and its OpenGL context */
-	    window = glfwCreateWindow(_width, _height, _title.toStringz, null, null);
-	    if (!window)
+	    windowHandle = glfwCreateWindow(_width, _height, _title.toStringz, null, null);
+	    if (!windowHandle)
 	    {
 	        throw new Exception("Failed to create window");
 	    }
 
-	    glfwSetWindowSizeCallback(window, &onResize);
+	    glfwSetWindowSizeCallback(windowHandle, &onResize);
 
 	    /* Make the window's context current */
-	    glfwMakeContextCurrent(window);
+	    glfwMakeContextCurrent(windowHandle);
 
-	    registry[window] = this;
+	    registry[windowHandle] = this;
 	}
 
 	@trusted
-	void RenderFrame(Scene scene)
+	void RenderFrame()
 	in
 	{
 		assert(!Closed);
-		assert(scene);
 	}
 	body
 	{
-	    glfwMakeContextCurrent(window);
-		glClearColor(0.2,0.4,0.4,1);
-
-		scene.render(this);
-
-		glfwSwapBuffers(window);
-
 		glfwPollEvents();
 
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE ) == GLFW_PRESS)
+		if (glfwGetKey(windowHandle, GLFW_KEY_ESCAPE ) == GLFW_PRESS)
 		{
-			glfwSetWindowShouldClose(window, 1);	    
+			glfwSetWindowShouldClose(windowHandle, 1);	    
 		}
 
-		if(glfwWindowShouldClose(window) == GLFW_TRUE)
+		if(glfwWindowShouldClose(windowHandle) == GLFW_TRUE)
 		{
 			Close();
 		}
@@ -85,14 +75,14 @@ class GlfwWindow : Window
 
 	void Close()
 	{
-		registry.remove(window);
-		glfwDestroyWindow(window);
-		window = null;
+		registry.remove(windowHandle);
+		glfwDestroyWindow(windowHandle);
+		windowHandle = null;
 	}
 
     bool Closed()
     {
-	    return window == null || glfwWindowShouldClose(window) == GLFW_TRUE;
+	    return windowHandle == null || glfwWindowShouldClose(windowHandle) == GLFW_TRUE;
     }
 
 	void Resize(int newWidth, int newHeight) nothrow
@@ -106,9 +96,7 @@ class GlfwWindow : Window
 	}
 
 private:
-	public GLFWwindow* window;
-
-	Scene _scene;
+	public GLFWwindow* windowHandle;
 
 	int _width;
 	int _height;
@@ -117,7 +105,7 @@ private:
 
 
 private:
-	Window[GLFWwindow*] registry;
+	GlfwWindow[GLFWwindow*] registry;
 
 	extern (C) void onResize(GLFWwindow* window, int width, int height) nothrow
 	{

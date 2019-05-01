@@ -15,8 +15,12 @@ class AssImpMeshDataRepository : MeshRepository.Data
 	
 	import std.typecons;
 
+	aiPropertyStore* importProperties;
+
 	this()
 	{
+		import std.string;
+
 		version(Windows)
 		{
 			DerelictASSIMP3.load("libs/assimp.dll");
@@ -25,19 +29,54 @@ class AssImpMeshDataRepository : MeshRepository.Data
 		{
 			DerelictASSIMP3.load();
 		}
+		importProperties = aiCreatePropertyStore();
+		aiSetImportPropertyInteger(importProperties, AI_CONFIG_PP_FD_REMOVE.toStringz, 1);
+	}
+
+	~this()
+	{
+		aiReleasePropertyStore(importProperties);
 	}
 
 	MeshData Load(string path)
 	{
-		import std.string;
+		import std.parallelism : task, taskPool;
 
-		auto scene = aiImportFile( path.toStringz, aiProcess_GenSmoothNormals | aiProcess_GenUVCoords );
 		auto id = nextID++;
 
-		//Convert to engine representation
-		scenes[id] = conv(*scene);
+		scenes[id] = new immutable Scene(new immutable (Mesh)[0]);
 
-		aiReleaseImport(scene);
+		alias loadMesh = function (Rebindable!(immutable Scene)[MeshData] scenes, aiPropertyStore* importProperties, string path, ulong id)
+		{
+			import std.string;
+			import std.file;
+			import std.path : extension;
+		
+			auto fileData = read(path);
+
+			auto importFlags = aiProcess_Triangulate
+				| aiProcess_SortByPType | aiProcess_JoinIdenticalVertices
+				| aiProcess_GenNormals | aiProcess_GenSmoothNormals
+				| aiProcess_GenUVCoords
+				| aiProcess_SplitLargeMeshes
+				| aiProcess_PreTransformVertices
+				| aiProcess_FindDegenerates;
+
+			auto scene = aiImportFileFromMemoryWithProperties( fileData.ptr,
+																fileData.length,
+																importFlags,
+																path.extension.toStringz,
+																importProperties
+																);
+
+			//Convert to engine representation
+			scenes[id] = conv(*scene);
+		
+			aiReleaseImport(scene);
+		};
+
+		auto loadingTask = task!loadMesh(scenes, importProperties, path, id);
+		taskPool.put(loadingTask);
 		return id;
 	}
 

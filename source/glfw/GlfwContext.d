@@ -4,13 +4,9 @@ import std.experimental.logger;
 import std.string;
 
 import derelict.glfw3;
-import window.window;
-import window.windowProvider;
-
-import glfw.GlfwWindow;
 
 @trusted
-class GlfwContext : WindowProvider
+class GlfwContext
 {
 	this()
 	{
@@ -40,11 +36,6 @@ class GlfwContext : WindowProvider
 	float GetTime()
 	{
 		return glfwGetTime();
-	}
-
-	Window CreateWindow(int width, int height, string title, Window parent)
-	{
-		return new GlfwWindow(this, width, height, title, parent);
 	}
 }
 
